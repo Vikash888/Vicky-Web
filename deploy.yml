@@ -19,23 +19,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
-      - name: Configure Git
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email github-actions[bot]@users.noreply.github.com
-
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: .
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Output Status
-        if: always()
-        run: |
-          if [ ${{ job.status }} == "success" ]; then
-            echo "🎉 Deployment successful!"
-          else
-            echo "❌ Deployment failed."
-          fi
