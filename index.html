@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,10 +8,10 @@
     <title>VIKASH</title>
 
     <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7COpen+Sans&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
 
     <!-- Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Custom styling -->
     <link rel="stylesheet" href="./assets/css/util.css">
@@ -18,7 +19,6 @@
     <link rel="stylesheet" href="./assets/css/style.css">
 
     <style>
-
         .btn-contact {
             background-color: green;
             color: white;
@@ -88,7 +88,7 @@
         <!-- End Header -->
 
         <!-- Main Content -->
-        <div class="content">
+        <main class="content">
             <div class="hero-info m-50" style="flex-basis: 640px;">
                 <h1>Connecting the dots in the <span class="locale">digital world</span></h1>
                 <p>Where innovation meets the web <a href="https://internet.org" target="_blank">Internet</a>,
@@ -118,8 +118,8 @@
                     </ul>
                 </div>
             </div>
-            <img src="assets/img/WEB.png" alt="WEB.png">
-        </div>
+            <img src="assets/img/WEB.png" alt="Web Development Illustration">
+        </main>
         <!-- End Main Content -->
 
         <!-- Footer -->
@@ -153,7 +153,7 @@
             try {
                 let response = await fetch(`https://ipinfo.io/${ip}/json`);
                 let data = await response.json();
-                console.log('Location data:', data); // Log the location data for debugging
+                console.log('Location data:', data);
                 return {
                     country: data.country,
                     city: data.city,
@@ -198,47 +198,54 @@
             return browser;
         }
 
-async function sendIPToTelegram(ip, location, os, browser) {
-    const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-    const message = `
+        async function sendIPToTelegram(ip, location, os, browser) {
+            const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+            const message = `
 New visitor detected!
 IP Address: ${ip}
 Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
 Google Maps: ${googleMapsUrl}
 Operating System: ${os}
 Browser: ${browser}
-    `;
-    const telegramBotToken = '6945654398:AAF7JZgUGyAW-fQQqgYTgsyDTQnyh48ZGz0';
-    const chatId = '1472170915';
-    try {
-        let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: message
-            })
-        });
+            `;
+            const telegramBotToken = 'YOUR_BOT_TOKEN_PLACEHOLDER';
+            const chatId = 'YOUR_CHAT_ID_PLACEHOLDER';
+            try {
+                let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message
+                    })
+                });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                let data = await response.json();
+                console.log('Data sent to Telegram successfully:', data);
+            } catch (error) {
+                console.error('Error sending message to Telegram:', error);
+            }
         }
 
-        let data = await response.json();
-        console.log('Data sent to Telegram successfully:', data);
-    } catch (error) {
-        console.error('Error sending message to Telegram:', error);
-    }
-}
-        // Function to retrieve visitor count
+        function isVisitorCounted() {
+            let visited = document.cookie.includes('visited=true');
+            if (!visited) {
+                document.cookie = 'visited=true; max-age=86400'; // Cookie expires in 24 hours
+            }
+            return visited;
+        }
+
         function getVisitorCount() {
             let count = localStorage.getItem('visitorCount') || 0;
             return parseInt(count);
         }
 
-        // Function to update visitor count
         function updateVisitorCount() {
             if (!isVisitorCounted()) {
                 let count = getVisitorCount();
@@ -250,52 +257,30 @@ Browser: ${browser}
             }
         }
 
-        // Update visitor count and display
         let visitorCount = updateVisitorCount();
         document.getElementById('visitorCount').textContent = visitorCount;
 
         getClientip().then(ip => {
             document.getElementById('Clientip').textContent = ip;
 
-            // Fetch visitor location
             getVisitorLocation(ip).then(location => {
                 sendIPToTelegram(ip, location, getVisitorOS(), getVisitorBrowser());
             });
         });
 
-        // Disable right-click context menu
+        // Security measures
         window.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
 
-        // Disable F12 key
         window.addEventListener('keydown', function (e) {
-            if (e.key === 'F12') {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
                 e.preventDefault();
             }
         });
 
-        // Disable Ctrl+Shift+I
-        window.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-            }
-        });
-
-        // Detect if developer tools are open
-        function detectDevTools() {
-            let startTime = performance.now();
-            debugger;
-            let endTime = performance.now();
-
-            if (endTime - startTime > 1) {
-                // Developer tools are open
-                alert('Developer tools detected! Please close them to continue.');
-                window.location.href = 'about:blank'; // Redirect to a blank page
-            }
-        }
-
-        detectDevTools();
+        // Note: The detectDevTools function has been removed as it may cause issues for legitimate users
     </script>
 </body>
+
 </html>
