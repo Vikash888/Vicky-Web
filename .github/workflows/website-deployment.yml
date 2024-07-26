@@ -1,4 +1,4 @@
-name: Deploy Website
+name: Website Deployment
 
 on:
   push:
@@ -8,17 +8,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-    - run: npm ci
-    - run: npm run build
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup environment variables
+      run: |
+        echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> $GITHUB_ENV
+        echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}" >> $GITHUB_ENV
+
     - name: Deploy to server
-      env:
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |
         # Your deployment commands here
-        # The secrets are now available as environment variables
+        echo "Deploying website..."
+        # Add your actual deployment commands
+        # For example, if you're using rsync to deploy to a server:
+        # rsync -avz --delete ./ user@your-server:/path/to/website/
+
+    - name: Send Telegram notification
+      if: success()
+      run: |
+        MESSAGE="Website deployed successfully!"
+        curl -s -X POST https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage -d chat_id=${{ env.TELEGRAM_CHAT_ID }} -d text="$MESSAGE"
