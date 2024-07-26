@@ -127,18 +127,16 @@
                 document.getElementById('mainContent').style.display = 'block';
             }, 1000);
 
-            fetch('/api/visitor-info')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
                 .then(data => {
                     document.getElementById('Clientip').textContent = data.ip;
                     updateVisitorCount();
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error fetching IP:', error);
+                    document.getElementById('Clientip').textContent = 'Unable to fetch';
+                });
         });
 
         function isVisitorCounted() {
