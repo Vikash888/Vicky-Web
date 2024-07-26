@@ -130,155 +130,57 @@
         <!-- End Footer -->
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        setTimeout(function () {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-        }, 1000);
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }, 1000);
 
-    async function getClientip() {
-        try {
-            let response = await fetch('https://api.ipify.org?format=json');
-            let data = await response.json();
-            return data.ip;
-        } catch (error) {
-            console.error('Error fetching IP address:', error);
-            return 'Unable to fetch IP';
-        }
-    }
-
-    async function getVisitorLocation(ip) {
-        try {
-            let response = await fetch(`https://ipapi.co/${ip}/json/`);
-            let data = await response.json();
-            console.log('Location data:', data);
-            return {
-                country: data.country_name,
-                city: data.city,
-                latitude: data.latitude,
-                longitude: data.longitude
-            };
-        } catch (error) {
-            console.error('Error fetching location data:', error);
-            return { country: 'Unable to fetch location', city: '', latitude: '', longitude: '' };
-        }
-    }
-
-    function getVisitorOS() {
-        let os = 'Unknown OS';
-        if (navigator.appVersion.indexOf("Win") != -1) os = "Windows";
-        if (navigator.appVersion.indexOf("Mac") != -1) os = "MacOS";
-        if (navigator.appVersion.indexOf("X11") != -1) os = "UNIX";
-        if (navigator.appVersion.indexOf("Linux") != -1) os = "Linux";
-        return os;
-    }
-
-    function getVisitorBrowser() {
-        let userAgent = navigator.userAgent;
-        let browser = 'Unknown Browser';
-
-        if (userAgent.match(/firefox|fxios/i)) {
-            browser = 'Firefox';
-        } else if (userAgent.match(/samsungbrowser/i)) {
-            browser = 'Samsung Internet';
-        } else if (userAgent.match(/opr\//i) || userAgent.match(/opera|opr/i)) {
-            browser = 'Opera';
-        } else if (userAgent.match(/trident/i)) {
-            browser = 'Internet Explorer';
-        } else if (userAgent.match(/edg/i)) {
-            browser = 'Microsoft Edge';
-        } else if (userAgent.match(/chrome|crios/i)) {
-            browser = 'Chrome';
-        } else if (userAgent.match(/safari/i)) {
-            browser = 'Safari';
-        }
-
-        return browser;
-    }
-
-    async function sendIPToTelegram(ip, location, os, browser) {
-        const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-        const message = `
-New visitor detected!
-IP Address: ${ip}
-Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
-Google Maps: ${googleMapsUrl}
-Operating System: ${os}
-Browser: ${browser}
-        `;
-        const telegramBotToken = '6945654398:AAF7JZgUGyAW-fQQqgYTgsyDTQnyh48ZGz0';
-        const chatId = '1472170915';
-        try {
-            let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message
+            fetch('/api/visitor-info')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('Clientip').textContent = data.ip;
+                    updateVisitorCount();
                 })
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            let data = await response.json();
-            console.log('Data sent to Telegram successfully:', data);
-        } catch (error) {
-            console.error('Error sending message to Telegram:', error);
-        }
-    }
-
-    function isVisitorCounted() {
-        let visited = localStorage.getItem('visited') === 'true';
-        if (!visited) {
-            localStorage.setItem('visited', 'true');
-        }
-        return visited;
-    }
-
-    function getVisitorCount() {
-        let count = localStorage.getItem('visitorCount') || 0;
-        return parseInt(count);
-    }
-
-    function updateVisitorCount() {
-        if (!isVisitorCounted()) {
-            let count = getVisitorCount();
-            count++;
-            localStorage.setItem('visitorCount', count.toString());
-            return count;
-        } else {
-            return getVisitorCount();
-        }
-    }
-
-    let visitorCount = updateVisitorCount();
-    document.getElementById('visitorCount').textContent = visitorCount;
-
-    getClientip().then(ip => {
-        document.getElementById('Clientip').textContent = ip;
-
-        getVisitorLocation(ip).then(location => {
-            sendIPToTelegram(ip, location, getVisitorOS(), getVisitorBrowser());
+                .catch(error => console.error('Error:', error));
         });
-    });
 
-    // Security measures
-    window.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-    });
-
-    window.addEventListener('keydown', function (e) {
-        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-            e.preventDefault();
+        function isVisitorCounted() {
+            let visited = localStorage.getItem('visited') === 'true';
+            if (!visited) {
+                localStorage.setItem('visited', 'true');
+            }
+            return visited;
         }
-    });
-</script>
+
+        function getVisitorCount() {
+            let count = localStorage.getItem('visitorCount') || 0;
+            return parseInt(count);
+        }
+
+        function updateVisitorCount() {
+            if (!isVisitorCounted()) {
+                let count = getVisitorCount();
+                count++;
+                localStorage.setItem('visitorCount', count.toString());
+                document.getElementById('visitorCount').textContent = count;
+            } else {
+                document.getElementById('visitorCount').textContent = getVisitorCount();
+            }
+        }
+
+        // Security measures
+        window.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        window.addEventListener('keydown', function (e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
 
 </html>
