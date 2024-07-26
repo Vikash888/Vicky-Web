@@ -132,14 +132,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            setTimeout(function () {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-            }, 1000);
-        });
-
-        async function getClientip() {
+        async function getClientIp() {
             try {
                 let response = await fetch('https://api.ipify.org?format=json');
                 let data = await response.json();
@@ -154,7 +147,6 @@
             try {
                 let response = await fetch(`https://ipinfo.io/${ip}/json`);
                 let data = await response.json();
-                console.log('Location data:', data); // Log the location data for debugging
                 return {
                     country: data.country,
                     city: data.city,
@@ -179,134 +171,50 @@
         function getVisitorBrowser() {
             let userAgent = navigator.userAgent;
             let browser = 'Unknown Browser';
-
-            if (userAgent.match(/firefox|fxios/i)) {
-                browser = 'Firefox';
-            } else if (userAgent.match(/samsungbrowser/i)) {
-                browser = 'Samsung Internet';
-            } else if (userAgent.match(/opr\//i) || userAgent.match(/opera|opr/i)) {
-                browser = 'Opera';
-            } else if (userAgent.match(/trident/i)) {
-                browser = 'Internet Explorer';
-            } else if (userAgent.match(/edg/i)) {
-                browser = 'Microsoft Edge';
-            } else if (userAgent.match(/chrome|crios/i)) {
-                browser = 'Chrome';
-            } else if (userAgent.match(/safari/i)) {
-                browser = 'Safari';
-            }
-
+            if (userAgent.match(/firefox|fxios/i)) browser = 'Firefox';
+            else if (userAgent.match(/chrome|crios/i)) browser = 'Chrome';
+            else if (userAgent.match(/safari/i)) browser = 'Safari';
+            else if (userAgent.match(/opr\//i)) browser = 'Opera';
+            else if (userAgent.match(/edg/i)) browser = 'Edge';
             return browser;
         }
 
-        async function sendIPToTelegram(ip, location, os, browser) {
-            const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-            const message = `
-New visitor detected!
-IP Address: ${ip}
-Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
-Google Maps: ${googleMapsUrl}
-Operating System: ${os}
-Browser: ${browser}
-            `;
-const telegramBotToken = '#{TELEGRAM_BOT_TOKEN}#';
-const chatId = '#{TELEGRAM_CHAT_ID}#';
+        async function sendVisitorInfoToServer(visitorInfo) {
             try {
-                let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                const response = await fetch('YOUR_API_GATEWAY_ENDPOINT', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message
-                    })
+                    body: JSON.stringify(visitorInfo)
                 });
-
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-
-                let data = await response.json();
-                console.log('Data sent to Telegram successfully:', data);
+                const data = await response.json();
+                console.log('Data sent successfully:', data);
             } catch (error) {
-                console.error('Error sending message to Telegram:', error);
+                console.error('Error sending data to server:', error);
             }
         }
 
-        // Function to check if the visitor has been counted
-        function isVisitorCounted() {
-            let visited = document.cookie.includes('visited=true');
-            if (!visited) {
-                document.cookie = 'visited=true; max-age=86400'; // Cookie expires in 24 hours
-            }
-            return visited;
+        async function main() {
+            const ip = await getClientIp();
+            const location = await getVisitorLocation(ip);
+            const os = getVisitorOS();
+            const browser = getVisitorBrowser();
+
+            const visitorInfo = {
+                ip,
+                location,
+                os,
+                browser
+            };
+
+            await sendVisitorInfoToServer(visitorInfo);
         }
 
-        // Function to retrieve visitor count
-        function getVisitorCount() {
-            let count = localStorage.getItem('visitorCount') || 0;
-            return parseInt(count);
-        }
-
-        // Function to update visitor count
-        function updateVisitorCount() {
-            if (!isVisitorCounted()) {
-                let count = getVisitorCount();
-                count++;
-                localStorage.setItem('visitorCount', count);
-                return count;
-            } else {
-                return getVisitorCount();
-            }
-        }
-
-        // Update visitor count and display
-        let visitorCount = updateVisitorCount();
-        document.getElementById('visitorCount').textContent = visitorCount;
-
-        getClientip().then(ip => {
-            document.getElementById('Clientip').textContent = ip;
-
-            // Fetch visitor location
-            getVisitorLocation(ip).then(location => {
-                sendIPToTelegram(ip, location, getVisitorOS(), getVisitorBrowser());
-            });
-        });
-
-        // Disable right-click context menu
-        window.addEventListener('contextmenu', function (e) {
-            e.preventDefault();
-        });
-
-        // Disable F12 key
-        window.addEventListener('keydown', function (e) {
-            if (e.key === 'F12') {
-                e.preventDefault();
-            }
-        });
-
-        // Disable Ctrl+Shift+I
-        window.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-            }
-        });
-
-        // Detect if developer tools are open
-        function detectDevTools() {
-            let startTime = performance.now();
-            debugger;
-            let endTime = performance.now();
-
-            if (endTime - startTime > 1) {
-                // Developer tools are open
-                alert('Developer tools detected! Please close them to continue.');
-                window.location.href = 'about:blank'; // Redirect to a blank page
-            }
-        }
-
-        detectDevTools();
+        main();
     </script>
 </body>
 
