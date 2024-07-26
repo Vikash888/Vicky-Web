@@ -15,7 +15,6 @@ app.get('/api/visitor-info', async (req, res) => {
     try {
         const locationResponse = await axios.get(`https://ipapi.co/${ip}/json/`);
         const location = locationResponse.data;
-
         const visitorInfo = {
             ip: ip,
             country: location.country_name,
@@ -25,12 +24,17 @@ app.get('/api/visitor-info', async (req, res) => {
             os: req.headers['user-agent'],
             browser: req.headers['user-agent']
         };
-
         console.log('Visitor Info:', visitorInfo);  // Debugging: Log the visitor info
 
         // Send notification to Telegram
         const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
         const chatId = process.env.TELEGRAM_CHAT_ID;
+
+        if (!telegramBotToken || !chatId) {
+            console.error('Telegram bot token or chat ID is missing');
+            return res.status(500).json({ error: 'Server configuration error' });
+        }
+
         const message = `
 New visitor detected!
 IP Address: ${visitorInfo.ip}
@@ -39,14 +43,19 @@ Google Maps: https://www.google.com/maps?q=${visitorInfo.latitude},${visitorInfo
 User Agent: ${visitorInfo.os}
         `;
 
-        await axios.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-            chat_id: chatId,
-            text: message
-        });
+        try {
+            const telegramResponse = await axios.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                chat_id: chatId,
+                text: message
+            });
+            console.log('Telegram API response:', telegramResponse.data);
+        } catch (telegramError) {
+            console.error('Error sending Telegram message:', telegramError.response ? telegramError.response.data : telegramError.message);
+        }
 
         res.json(visitorInfo);
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error:', error.response ? error.response.data : error.message);
         res.status(500).json({ error: 'An error occurred while fetching visitor information' });
     }
 });
