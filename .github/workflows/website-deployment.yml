@@ -1,35 +1,38 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
     branches: [ main ]
-
-permissions:
-  contents: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      
-      - name: Replace placeholders with secrets
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create .env file
         run: |
-          sed -i 's/YOUR_BOT_TOKEN_PLACEHOLDER/${{ secrets.TELEGRAM_BOT_TOKEN }}/g' index.html
-          sed -i 's/YOUR_CHAT_ID_PLACEHOLDER/${{ secrets.TELEGRAM_CHAT_ID }}/g' index.html
-      
-      - name: Commit changes
+          echo TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} >> .env
+          echo TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }} >> .env
+
+      - name: Build and start server
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Replace placeholders with secrets" || echo "No changes to commit"
-      
-      - name: Push changes
-        run: git push
-      
-      - name: Send Telegram notification
-        if: success()
-        run: |
-          MESSAGE="Website updated successfully. Please check https://vikash888.github.io/Vicky-Web/"
-          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} -d text="$MESSAGE"
+          npm start &
+          sleep 5
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+
+      - name: Stop server
+        run: pkill node
