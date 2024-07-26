@@ -1,27 +1,49 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages and AWS Lambda
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  deploy-to-github-pages:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-      - name: Replace tokens
+      - name: Replace API Gateway Endpoint
         uses: cschleiden/replace-tokens@v1
         with:
           files: '["**/*.html"]'
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          YOUR_API_GATEWAY_ENDPOINT: ${{ secrets.API_GATEWAY_ENDPOINT }}
 
-      - name: Deploy 🚀
+      - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: .
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-to-aws-lambda:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: your-aws-region
+
+      - name: Deploy to AWS Lambda 🚀
+        run: |
+          zip -j function.zip index.js
+          aws lambda update-function-code --function-name your-lambda-function-name --zip-file fileb://function.zip
+
+      - name: Update Lambda environment variables
+        run: |
+          aws lambda update-function-configuration --function-name your-lambda-function-name \
+            --environment "Variables={TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }},TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}}"
