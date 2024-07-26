@@ -15,7 +15,7 @@ app.get('/api/visitor-info', async (req, res) => {
     try {
         const locationResponse = await axios.get(`https://ipapi.co/${ip}/json/`);
         const location = locationResponse.data;
-        
+
         const visitorInfo = {
             ip: ip,
             country: location.country_name,
