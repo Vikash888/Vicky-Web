@@ -21,21 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Create .env file
-        run: |
-          echo TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} >> .env
-          echo TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }} >> .env
-
-      - name: Build and start server
-        run: |
-          npm start &
-          sleep 5
+      - name: Build static site
+        run: npm run build  # Assuming you have a build script in package.json
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-
-      - name: Stop server
-        run: pkill node
+          publish_dir: ./index.html
