@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,14 +32,12 @@
             background-color: mediumslateblue;
         }
 
-        /* Example media query for smaller screens */
         @media only screen and (max-width: 600px) {
             .logo {
                 width: 100px;
             }
         }
 
-        /* Style for visitor count in the footer */
         footer {
             position: fixed;
             left: 20px;
@@ -49,7 +46,6 @@
             color: orangered;
         }
 
-        /* Loading screen styles */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -71,7 +67,6 @@
     </div>
 
     <div class="wrapper" style="display: none;" id="mainContent">
-        <!-- Header -->
         <header>
             <img class="logo" src="./assets/img/logo.png" width="100" alt="VIKASH" />
             <nav>
@@ -85,9 +80,7 @@
                 <i class="fa fa-envelope-o"></i> Contact Us
             </a>
         </header>
-        <!-- End Header -->
 
-        <!-- Main Content -->
         <main class="content">
             <div class="hero-info m-50" style="flex-basis: 640px;">
                 <h1>Connecting the dots in the <span class="locale">digital world</span></h1>
@@ -120,14 +113,11 @@
             </div>
             <img src="assets/img/WEB.png" alt="Web Development Illustration">
         </main>
-        <!-- End Main Content -->
 
-        <!-- Footer -->
         <footer>
             <p>Client IP: <span id="Clientip">Fetching...</span></p>
             <p>Total Visitors: <span id="visitorCount">0</span></p>
         </footer>
-        <!-- End Footer -->
     </div>
 
     <script>
@@ -170,7 +160,6 @@
             }
         }
 
-        // Security measures
         window.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
@@ -182,5 +171,4 @@
         });
     </script>
 </body>
-
 </html>
