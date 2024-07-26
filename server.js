@@ -9,60 +9,44 @@ const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/visitor-info', async (req, res) => {
-    console.log('Visitor info endpoint called');
-    
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    console.log(`Detected IP: ${ip}`);
+  console.log('Visitor info endpoint called');
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  console.log(`Detected IP: ${ip}`);
 
-    try {
-        const locationResponse = await axios.get(`https://ipapi.co/${ip}/json/`);
-        console.log('ipapi.co response:', locationResponse.data);
-        
-        const location = locationResponse.data;
-        const visitorInfo = {
-            ip: ip,
-            country: location.country_name,
-            city: location.city,
-            latitude: location.latitude,
-            longitude: location.longitude,
-            os: req.headers['user-agent'],
-            browser: req.headers['user-agent']
-        };
-        console.log('Visitor Info:', visitorInfo);
+  try {
+    const locationResponse = await axios.get(`https://ipapi.co/${ip}/json/`);
+    console.log('Location API response:', locationResponse.data);
 
-        // Send notification to Telegram
-        const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-        const chatId = process.env.TELEGRAM_CHAT_ID;
+    const location = locationResponse.data;
+    const os = req.headers['user-agent'];
+    const browser = req.headers['user-agent'];
+    const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
 
-        if (!telegramBotToken || !chatId) {
-            console.error('Telegram bot token or chat ID is missing');
-            return res.status(500).json({ error: 'Server configuration error' });
-        }
-
-        const message = `
+    const message = `
 New visitor detected!
-IP Address: ${visitorInfo.ip}
-Location: ${visitorInfo.country}, ${visitorInfo.city} (${visitorInfo.latitude}, ${visitorInfo.longitude})
-Google Maps: https://www.google.com/maps?q=${visitorInfo.latitude},${visitorInfo.longitude}
-User Agent: ${visitorInfo.os}
-        `;
+IP Address: ${ip}
+Location: ${location.country_name}, ${location.city} (${location.latitude}, ${location.longitude})
+Google Maps: ${googleMapsUrl}
+Operating System: ${os}
+Browser: ${browser}
+    `;
 
-        try {
-            const telegramResponse = await axios.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-                chat_id: chatId,
-                text: message
-            });
-            console.log('Telegram message sent successfully:', telegramResponse.data);
-        } catch (telegramError) {
-            console.error('Error sending Telegram message:', telegramError.response ? telegramError.response.data : telegramError.message);
-            console.error('Full error object:', telegramError);
-        }
+    console.log('Preparing to send Telegram message:', message);
 
-        res.json(visitorInfo);
-    } catch (error) {
-        console.error('Error:', error.response ? error.response.data : error.message);
-        res.status(500).json({ error: 'An error occurred while fetching visitor information' });
-    }
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    const telegramResponse = await axios.post(
+      `https://api.telegram.org/bot${botToken}/sendMessage`,
+      { chat_id: chatId, text: message }
+    );
+    console.log('Telegram API response:', telegramResponse.data);
+
+    res.json({ success: true, message: 'Visitor info processed and notification sent' });
+  } catch (error) {
+    console.error('Error:', error.response ? error.response.data : error.message);
+    res.status(500).json({ error: 'An error occurred while processing visitor information' });
+  }
 });
 
 // Test route for Telegram API
