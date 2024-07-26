@@ -11,21 +11,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Setup environment variables
+    - name: Replace placeholders with secrets
       run: |
-        echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> $GITHUB_ENV
-        echo "TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}" >> $GITHUB_ENV
+        sed -i 's/YOUR_BOT_TOKEN_PLACEHOLDER/${{ secrets.TELEGRAM_BOT_TOKEN }}/g' index.html
+        sed -i 's/YOUR_CHAT_ID_PLACEHOLDER/${{ secrets.TELEGRAM_CHAT_ID }}/g' index.html
 
-    - name: Deploy to server
-      run: |
-        # Your deployment commands here
-        echo "Deploying website..."
-        # Add your actual deployment commands
-        # For example, if you're using rsync to deploy to a server:
-        # rsync -avz --delete ./ user@your-server:/path/to/website/
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .
 
     - name: Send Telegram notification
       if: success()
       run: |
         MESSAGE="Website deployed successfully!"
-        curl -s -X POST https://api.telegram.org/bot${{ env.TELEGRAM_BOT_TOKEN }}/sendMessage -d chat_id=${{ env.TELEGRAM_CHAT_ID }} -d text="$MESSAGE"
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} -d text="$MESSAGE"
