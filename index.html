@@ -19,7 +19,46 @@
     <link rel="stylesheet" href="./assets/css/style.css">
 
     <style>
-        /* Your custom styles here */
+        .btn-contact {
+            background-color: green;
+            color: white;
+            border-radius: 30px;
+            padding: 12px 30px;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn-contact:hover {
+            background-color: mediumslateblue;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .logo {
+                width: 100px;
+            }
+        }
+
+        footer {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            font-size: 14px;
+            color: orangered;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            z-index: 9999;
+        }
     </style>
 </head>
 
@@ -111,6 +150,7 @@
             try {
                 let response = await fetch(`https://ipinfo.io/${ip}/json`);
                 let data = await response.json();
+                console.log('Location data:', data); // Log the location data for debugging
                 return {
                     country: data.country,
                     city: data.city,
@@ -207,48 +247,35 @@
             }
         }
 
-        // Update visitor count and display
         let visitorCount = updateVisitorCount();
         document.getElementById('visitorCount').textContent = visitorCount;
 
         getClientip().then(ip => {
             document.getElementById('Clientip').textContent = ip;
 
-            // Fetch visitor location
             getVisitorLocation(ip).then(location => {
                 sendIPToBackend(ip, location, getVisitorOS(), getVisitorBrowser());
             });
         });
 
-        // Disable right-click context menu
         window.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
 
-        // Disable F12 key
         window.addEventListener('keydown', function (e) {
-            if (e.key === 'F12') {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
                 e.preventDefault();
             }
         });
 
-        // Disable Ctrl+Shift+I
-        window.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-            }
-        });
-
-        // Detect if developer tools are open
         function detectDevTools() {
             let startTime = performance.now();
             debugger;
             let endTime = performance.now();
 
             if (endTime - startTime > 1) {
-                // Developer tools are open
                 alert('Developer tools detected! Please close them to continue.');
-                window.location.href = 'about:blank'; // Redirect to a blank page
+                window.location.href = 'about:blank';
             }
         }
 
