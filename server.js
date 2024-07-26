@@ -10,6 +10,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/visitor-info', async (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    console.log(`Visitor IP: ${ip}`);  // Debugging: Log the IP address
+
     try {
         const locationResponse = await axios.get(`https://ipapi.co/${ip}/json/`);
         const location = locationResponse.data;
@@ -23,6 +25,8 @@ app.get('/api/visitor-info', async (req, res) => {
             os: req.headers['user-agent'],
             browser: req.headers['user-agent']
         };
+
+        console.log('Visitor Info:', visitorInfo);  // Debugging: Log the visitor info
 
         // Send notification to Telegram
         const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
