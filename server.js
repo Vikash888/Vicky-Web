@@ -1,28 +1,44 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const axios = require('axios');
 
 const app = express();
 const port = 3000;
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// POST endpoint to handle incoming messages
-app.post('/send-message', (req, res) => {
+app.post('/send-message', async (req, res) => {
     const { ip, location, os, browser } = req.body;
 
-    console.log('Received message:', {
-        ip,
-        location,
-        os,
-        browser
-    });
+    const telegramBotToken = 'YOUR_TELEGRAM_BOT_TOKEN';
+    const chatId = 'YOUR_CHAT_ID';
+    const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+    const message = `
+New visitor detected!
+IP Address: ${ip}
+Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
+Google Maps: ${googleMapsUrl}
+Operating System: ${os}
+Browser: ${browser}
+    `;
 
-    // You can perform additional operations here, like saving to a database
+    try {
+        const response = await axios.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            chat_id: chatId,
+            text: message
+        });
 
-    res.status(200).json({ message: 'Message received successfully' });
+        if (response.data.ok) {
+            res.status(200).json({ message: 'Message sent successfully' });
+        } else {
+            throw new Error('Failed to send message');
+        }
+    } catch (error) {
+        console.error('Error sending message to Telegram:', error);
+        res.status(500).json({ message: 'Failed to send message to Telegram' });
+    }
 });
 
 app.listen(port, () => {
