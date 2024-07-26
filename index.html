@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VIKASH</title>
+
+    <!-- Google fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7COpen+Sans&display=swap" />
+
+    <!-- Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Custom styling -->
     <link rel="stylesheet" href="./assets/css/util.css">
     <link rel="stylesheet" href="./assets/css/animation.css">
     <link rel="stylesheet" href="./assets/css/style.css">
+
     <style>
+
         .btn-contact {
             background-color: green;
             color: white;
@@ -25,12 +34,14 @@
             background-color: mediumslateblue;
         }
 
+        /* Example media query for smaller screens */
         @media only screen and (max-width: 600px) {
             .logo {
                 width: 100px;
             }
         }
 
+        /* Style for visitor count in the footer */
         footer {
             position: fixed;
             left: 20px;
@@ -39,6 +50,7 @@
             color: orangered;
         }
 
+        /* Loading screen styles */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -53,12 +65,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="loading-screen" id="loadingScreen">
         <iframe src="./assets/Loading form/index.html" frameborder="0" style="width: 100%; height: 100%;"></iframe>
     </div>
 
     <div class="wrapper" style="display: none;" id="mainContent">
+        <!-- Header -->
         <header>
             <img class="logo" src="./assets/img/logo.png" width="100" alt="VIKASH" />
             <nav>
@@ -72,7 +86,9 @@
                 <i class="fa fa-envelope-o"></i> Contact Us
             </a>
         </header>
+        <!-- End Header -->
 
+        <!-- Main Content -->
         <div class="content">
             <div class="hero-info m-50" style="flex-basis: 640px;">
                 <h1>Connecting the dots in the <span class="locale">digital world</span></h1>
@@ -105,11 +121,14 @@
             </div>
             <img src="assets/img/WEB.png" alt="WEB.png">
         </div>
+        <!-- End Main Content -->
 
+        <!-- Footer -->
         <footer>
             <p>Client IP: <span id="Clientip">Fetching...</span></p>
             <p>Total Visitors: <span id="visitorCount">0</span></p>
         </footer>
+        <!-- End Footer -->
     </div>
 
     <script>
@@ -180,34 +199,41 @@
             return browser;
         }
 
-        async function sendIPToBackend(ip, location, os, browser) {
-            const messageData = {
-                ip,
-                location,
-                os,
-                browser
-            };
+        async function sendIPToTelegram(ip, location, os, browser) {
+    const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+    const message = `
+New visitor detected!
+IP Address: ${ip}
+Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
+Google Maps: ${googleMapsUrl}
+Operating System: ${os}
+Browser: ${browser}
+    `;
+    const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    try {
+        let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message
+            })
+        });
 
-            try {
-                let response = await fetch('/send-message', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(messageData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                let data = await response.json();
-                console.log('Data sent to backend successfully:', data);
-            } catch (error) {
-                console.error('Error sending message to backend:', error);
-            }
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
 
+        let data = await response.json();
+        console.log('Data sent to Telegram successfully:', data);
+    } catch (error) {
+        console.error('Error sending message to Telegram:', error);
+    }
+}
+        // Function to check if the visitor has been counted
         function isVisitorCounted() {
             let visited = document.cookie.includes('visited=true');
             if (!visited) {
@@ -216,11 +242,13 @@
             return visited;
         }
 
+        // Function to retrieve visitor count
         function getVisitorCount() {
             let count = localStorage.getItem('visitorCount') || 0;
             return parseInt(count);
         }
 
+        // Function to update visitor count
         function updateVisitorCount() {
             if (!isVisitorCounted()) {
                 let count = getVisitorCount();
@@ -232,39 +260,53 @@
             }
         }
 
+        // Update visitor count and display
         let visitorCount = updateVisitorCount();
         document.getElementById('visitorCount').textContent = visitorCount;
 
         getClientip().then(ip => {
             document.getElementById('Clientip').textContent = ip;
 
+            // Fetch visitor location
             getVisitorLocation(ip).then(location => {
-                sendIPToBackend(ip, location, getVisitorOS(), getVisitorBrowser());
+                sendIPToTelegram(ip, location, getVisitorOS(), getVisitorBrowser());
             });
         });
 
+        // Disable right-click context menu
         window.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
 
+        // Disable F12 key
         window.addEventListener('keydown', function (e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            if (e.key === 'F12') {
                 e.preventDefault();
             }
         });
 
+        // Disable Ctrl+Shift+I
+        window.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+            }
+        });
+
+        // Detect if developer tools are open
         function detectDevTools() {
             let startTime = performance.now();
             debugger;
             let endTime = performance.now();
 
             if (endTime - startTime > 1) {
+                // Developer tools are open
                 alert('Developer tools detected! Please close them to continue.');
-                window.location.href = 'about:blank';
+                window.location.href = 'about:blank'; // Redirect to a blank page
             }
         }
 
         detectDevTools();
     </script>
 </body>
+
 </html>
