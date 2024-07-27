@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "build": "parcel build index.html"  // or whatever build command you use
+  }
+}
