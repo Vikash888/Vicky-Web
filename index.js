@@ -30,7 +30,7 @@ Browser: ${visitorInfo.browser}
     }
 };
 
-function sendTelegramMessage(token, chatId, text) {
+function sendTelegramMessage(telegramBotToken, chatId, text) {
     return new Promise((resolve, reject) => {
         const data = JSON.stringify({
             chat_id: chatId,
@@ -40,7 +40,7 @@ function sendTelegramMessage(token, chatId, text) {
         const options = {
             hostname: 'api.telegram.org',
             port: 443,
-            path: `/bot${token}/sendMessage`,
+            path: `/bot${telegramBotToken}/sendMessage`,
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
