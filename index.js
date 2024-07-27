@@ -50,11 +50,9 @@ function sendTelegramMessage(telegramBotToken, chatId, text) {
 
         const req = https.request(options, (res) => {
             let responseBody = '';
-
             res.on('data', (chunk) => {
                 responseBody += chunk;
             });
-
             res.on('end', () => {
                 if (res.statusCode === 200) {
                     resolve(JSON.parse(responseBody));
