@@ -132,6 +132,12 @@
     </div>
 
     <script>
+                document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }, 1000);
+        });
         async function getClientIp() {
             try {
                 let response = await fetch('https://api.ipify.org?format=json');
