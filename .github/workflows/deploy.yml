@@ -1,27 +1,38 @@
-name: Deploy to GitHub Pages
+name: Deploy and Set Environment Variables
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # or your default branch name
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v2
 
-      - name: Replace tokens
-        uses: cschleiden/replace-tokens@v1
-        with:
-          files: '["**/*.html"]'
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # or your preferred Node.js version
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: .
-          token: ${{ secrets.PAT }}
+    - name: Install dependencies
+      run: npm ci  # or yarn install if you use Yarn
+
+    - name: Build
+      run: npm run build  # adjust this to your build command
+
+    - name: Deploy
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: |
+        # Replace placeholders in your HTML file
+        sed -i 's/process.env.TELEGRAM_BOT_TOKEN/"${{ secrets.TELEGRAM_BOT_TOKEN }}"/g' index.html
+        sed -i 's/process.env.TELEGRAM_CHAT_ID/"${{ secrets.TELEGRAM_CHAT_ID }}"/g' index.html
+        
+        # Add your deployment commands here
+        # For example, if you're using GitHub Pages:
+        # npm run deploy
+
+    # Add more steps as needed for your deployment process
