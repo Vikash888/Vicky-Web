@@ -16,23 +16,25 @@ jobs:
       with:
         node-version: '14'  # or your preferred Node.js version
 
+    - name: Create package.json
+      run: |
+        echo '{"name":"your-project-name","version":"1.0.0","scripts":{"build":"echo \"No build specified\""}}' > package.json
+
     - name: Install dependencies
-      run: npm ci  # or yarn install if you use Yarn
+      run: npm ci  # This should now work with the minimal package.json
 
-    - name: Build
-      run: npm run build  # adjust this to your build command
-
-    - name: Deploy
+    - name: Replace placeholders
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |
-        # Replace placeholders in your HTML file
         sed -i 's/process.env.TELEGRAM_BOT_TOKEN/"${{ secrets.TELEGRAM_BOT_TOKEN }}"/g' index.html
         sed -i 's/process.env.TELEGRAM_CHAT_ID/"${{ secrets.TELEGRAM_CHAT_ID }}"/g' index.html
-        
-        # Add your deployment commands here
-        # For example, if you're using GitHub Pages:
-        # npm run deploy
 
-    # Add more steps as needed for your deployment process
+    # Add your deployment steps here
+    # For example:
+    # - name: Deploy to GitHub Pages
+    #   uses: peaceiris/actions-gh-pages@v3
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_dir: .
