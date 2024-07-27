@@ -5,6 +5,9 @@ on:
     branches:
       - main  # or your default branch name
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,8 +22,6 @@ jobs:
         sed -i 's/const telegramBotToken = '"'"'.*'"'"';/const telegramBotToken = '"'"'${{ secrets.TELEGRAM_BOT_TOKEN }}'"'"';/' index.html
         sed -i 's/const chatId = '"'"'.*'"'"';/const chatId = '"'"'${{ secrets.TELEGRAM_CHAT_ID }}'"'"';/' index.html
 
-    # Add your deployment steps here
-    # For example, if you're using GitHub Pages:
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
