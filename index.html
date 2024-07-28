@@ -209,28 +209,6 @@ Operating System: ${os}
 Browser: ${browser}
         `
     };
-
-    try {
-        console.log('Sending to Discord:', DISCORD_WEBHOOK_URL);
-        let response = await fetch(DISCORD_WEBHOOK_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(message)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const responseText = await response.text();
-        console.log('Discord response:', responseText);
-    } catch (error) {
-        console.error('Error sending message to Discord:', error);
-    }
-}
-
         function isVisitorCounted() {
             let visited = document.cookie.includes('visited=true');
             if (!visited) {
