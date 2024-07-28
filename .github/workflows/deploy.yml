@@ -1,19 +1,15 @@
 name: Deploy and Set Environment Variables
-
 on:
   push:
     branches:
       - main  # or your default branch name
-
 permissions:
   contents: write
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
     - name: Replace placeholders
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -21,7 +17,6 @@ jobs:
       run: |
         sed -i 's/const telegramBotToken = '"'"'.*'"'"';/const telegramBotToken = '"'"'${{ secrets.TELEGRAM_BOT_TOKEN }}'"'"';/' index.html
         sed -i 's/const chatId = '"'"'.*'"'"';/const chatId = '"'"'${{ secrets.TELEGRAM_CHAT_ID }}'"'"';/' index.html
-
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
