@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="./assets/css/style.css">
 
     <style>
-
         .btn-contact {
             background-color: green;
             color: white;
@@ -34,14 +33,12 @@
             background-color: mediumslateblue;
         }
 
-        /* Example media query for smaller screens */
         @media only screen and (max-width: 600px) {
             .logo {
                 width: 100px;
             }
         }
 
-        /* Style for visitor count in the footer */
         footer {
             position: fixed;
             left: 20px;
@@ -50,17 +47,17 @@
             color: orangered;
         }
 
-            .loading-screen {
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: #fff;
             z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
     </style>
 </head>
@@ -130,68 +127,15 @@
         <!-- End Footer -->
     </div>
 
-Here's the entire HTML code with the modifications we've discussed:
-htmlCopy<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIKASH</title>
-
-    <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7COpen+Sans&display=swap" />
-
-    <!-- Libraries -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Custom styling -->
-    <link rel="stylesheet" href="./assets/css/util.css">
-    <link rel="stylesheet" href="./assets/css/animation.css">
-    <link rel="stylesheet" href="./assets/css/style.css">
-
-    <style>
-        /* Your existing styles here */
-    </style>
-</head>
-
-<body>
-    <div class="loading-screen" id="loadingScreen">
-        <iframe src="./assets/Loading form/index.html" frameborder="0" style="width: 100%; height: 100%;"></iframe>
-    </div>
-
-    <div class="wrapper" style="display: none;" id="mainContent">
-        <!-- Header -->
-        <header>
-            <!-- Your header content here -->
-        </header>
-        <!-- End Header -->
-
-        <!-- Main Content -->
-        <div class="content">
-            <!-- Your main content here -->
-        </div>
-        <!-- End Main Content -->
-
-        <!-- Footer -->
-        <footer>
-            <p>Client IP: <span id="Clientip">Fetching...</span></p>
-            <p>Total Visitors: <span id="visitorCount">0</span></p>
-        </footer>
-        <!-- End Footer -->
-    </div>
-
     <script>
+        // Discord webhook URL
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1262504162751680582/6BqMbWkomK8CpKQl2HaHVDWS-cAFEJtmGDbjsiBvBSNk14boIbZbXGm-Px7sDzUdU0I2';
         document.addEventListener('DOMContentLoaded', function () {
             setTimeout(function () {
                 document.getElementById('loadingScreen').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             }, 1000);
         });
-
-        const telegramBotToken = 'PLACEHOLDER_TOKEN';
-        const chatId = 'PLACEHOLDER_CHAT_ID';
 
         async function getClientip() {
             try {
@@ -253,42 +197,39 @@ htmlCopy<!DOCTYPE html>
             return browser;
         }
 
-        async function sendToTelegram(ip, location, os, browser) {
-            const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-            const message = `
+async function sendToDiscord(ip, location, os, browser) {
+    const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+    const message = {
+        content: `
 New visitor detected!
 IP Address: ${ip}
 Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
 Google Maps: ${googleMapsUrl}
 Operating System: ${os}
 Browser: ${browser}
-            `;
+        `
+    };
 
-            const url = `https://cors-anywhere.herokuapp.com/https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
-            
-            try {
-                let response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Origin': 'https://vikash888.github.io'
-                    },
-                    body: JSON.stringify({
-                        chat_id: chatId,
-                        text: message
-                    })
-                });
+    try {
+        console.log('Sending to Discord:', DISCORD_WEBHOOK_URL);
+        let response = await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(message)
+        });
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                let data = await response.json();
-                console.log('Data sent to Telegram successfully:', data);
-            } catch (error) {
-                console.error('Error sending message to Telegram:', error);
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const responseText = await response.text();
+        console.log('Discord response:', responseText);
+    } catch (error) {
+        console.error('Error sending message to Discord:', error);
+    }
+}
 
         function isVisitorCounted() {
             let visited = document.cookie.includes('visited=true');
@@ -321,30 +262,26 @@ Browser: ${browser}
             document.getElementById('Clientip').textContent = ip;
 
             getVisitorLocation(ip).then(location => {
-                sendIPToTelegram(ip, location, getVisitorOS(), getVisitorBrowser());
+                sendToDiscord(ip, location, getVisitorOS(), getVisitorBrowser());
             });
         });
 
-        // Disable right-click context menu
         window.addEventListener('contextmenu', function (e) {
             e.preventDefault();
         });
 
-        // Disable F12 key
         window.addEventListener('keydown', function (e) {
             if (e.key === 'F12') {
                 e.preventDefault();
             }
         });
 
-        // Disable Ctrl+Shift+I
         window.addEventListener('keydown', function (e) {
             if (e.ctrlKey && e.shiftKey && e.key === 'I') {
                 e.preventDefault();
             }
         });
 
-        // Detect if developer tools are open
         function detectDevTools() {
             let startTime = performance.now();
             debugger;
