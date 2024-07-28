@@ -15,8 +15,11 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       run: |
-        sed -i 's/const telegramBotToken = '"'"'.*'"'"';/const telegramBotToken = '"'"'${{ secrets.TELEGRAM_BOT_TOKEN }}'"'"';/' index.html
-        sed -i 's/const chatId = '"'"'.*'"'"';/const chatId = '"'"'${{ secrets.TELEGRAM_CHAT_ID }}'"'"';/' index.html
+        sed -i "s/const telegramBotToken = 'PLACEHOLDER_TOKEN';/const telegramBotToken = '${{ secrets.TELEGRAM_BOT_TOKEN }}';/" index.html
+        sed -i "s/const chatId = 'PLACEHOLDER_CHAT_ID';/const chatId = '${{ secrets.TELEGRAM_CHAT_ID }}';/" index.html
+        echo "Replacement complete. Checking result:"
+        grep "const telegramBotToken" index.html
+        grep "const chatId" index.html
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
