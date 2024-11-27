@@ -74,9 +74,13 @@ header > button:hover {
 
 .content {
     display: flex;
-    padding: 80px 10%;
+    align-items: center;
     justify-content: space-between;
     color: white;
+    min-height: calc(100vh - 100px); /* Subtract header and footer height */
+    background: url('assets/img/WEB.png') no-repeat center center;
+    background-size: cover;
+    padding: 0 50px;
 }
 
 .hero-info h1 {
